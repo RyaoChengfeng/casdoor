@@ -28,6 +28,8 @@ import SelfLoginButton from "./SelfLoginButton";
 import i18next from "i18next";
 import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
+// import BilibiliLoginButton from "./BilibiliLoginButton";
+import {NextTwoFactor, VerityTotp} from "./TwoFactor";
 
 const {TabPane} = Tabs;
 
@@ -48,6 +50,7 @@ class LoginPage extends React.Component {
       validEmail: false,
       validPhone: false,
       loginMethod: "password",
+      getVerityTotp: null,
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -244,7 +247,7 @@ class LoginPage extends React.Component {
 
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
-          if (res.status === "ok") {
+          const callback = () => {
             const responseType = values["type"];
             if (responseType === "login") {
               Util.showMessage("success", "Logged in successfully");
@@ -262,6 +265,20 @@ class LoginPage extends React.Component {
               const redirectUri = res.data2;
               Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
             }
+          };
+          if (res.status === "ok") {
+            callback();
+          } else if (res.status === NextTwoFactor) {
+            this.setState({
+              getVerityTotp: () => {
+                return (
+                  <VerityTotp
+                    onFail={() => {
+                      Setting.showMessage("error", i18next.t("two-factor:Verification failed"));
+                    }}
+                    onSuccess={() => callback()} />);
+              },
+            });
           } else {
             Util.showMessage("error", `Failed to log in: ${res.msg}`);
           }
@@ -733,7 +750,27 @@ class LoginPage extends React.Component {
             </div>
           </Col>
         </Row>
+        <Row>
+          <Col span={24} style={{display: "flex", justifyContent: "center"}}>
+            <div style={{marginTop: "80px", marginBottom: "50px", textAlign: "center"}}>
+              {
+                Setting.renderHelmet(application)
+              }
+              <CustomGithubCorner />
+              {
+                Setting.renderLogo(application)
+              }
+              {/* {*/}
+              {/*  this.state.clientId !== null ? "Redirect" : null*/}
+              {/* }*/}
+              {this.state.getVerityTotp === null && this.renderSignedInBox()}
+              {this.state.getVerityTotp === null && this.renderForm(application)}
+              {this.state.getVerityTotp && this.state.getVerityTotp()}
+            </div>
+          </Col>
+        </Row>
       </div>
+
     );
   }
 }

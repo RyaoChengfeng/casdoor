@@ -112,6 +112,10 @@ p, *, *, *, /cas, *, *
 p, *, *, *, /api/webauthn, *, *
 p, *, *, GET, /api/get-release, *, *
 p, *, *, GET, /api/get-default-application, *, *
+p, *, *, POST, /api/two-factor/setup/totp/init, *, *
+p, *, *, POST, /api/two-factor/setup/totp/verity, *, *
+p, *, *, POST, /api/two-factor/auth/totp, *, *
+p, *, *, POST, /api/two-factor/auth/totp/recover, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)

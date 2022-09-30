@@ -29,6 +29,7 @@ require (
 	github.com/lib/pq v1.8.0
 	github.com/lor00x/goldap v0.0.0-20180618054307-a546dffdd1a3
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
+	github.com/pquerna/otp v1.3.0
 	github.com/qiangmzsx/string-adapter/v2 v2.1.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/russellhaering/gosaml2 v0.6.0
