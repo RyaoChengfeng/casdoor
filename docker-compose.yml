@@ -1,6 +1,7 @@
 version: '3.1'
 services:
   casdoor:
+    container_name: casdoor
     restart: always
     build:
       context: ./
@@ -16,12 +17,13 @@ services:
     volumes:
       - ./conf:/conf/
   db:
+    container_name: casdoor_mysql
     restart: always
     image: mysql:8.0.25
     platform: linux/amd64
     ports:
-      - "53306:3306"
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: 123456
     volumes:
-      - /usr/local/docker/mysql:/var/lib/mysql
+      - D:\data\casdoor_mysql:/var/lib/mysql
